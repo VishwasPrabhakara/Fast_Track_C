@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_FILES 50
+
+// Function to create files with names file1.txt to file50.txt
+void createFiles() {
+    FILE *file;
+    char filename[15];
+
+    for (int i = 1; i <= MAX_FILES; i++) {
+        // Create file names file1.txt to file50.txt
+        sprintf(filename, "file%d.txt", i);
+
+        // Open file for writing
+        file = fopen(filename, "w");
+
+        if (file == NULL) {
+            perror("Error creating file");
+            exit(EXIT_FAILURE);
+        }
+
+        // Write content 'pqri.dat' into the file
+        fprintf(file, "pqri%d.dat", i);
+
+        // Close the file
+        fclose(file);
+    }
+}
+
+// Function to read each file, create new file, and display content
+void processFiles() {
+    FILE *oldFile, *newFile;
+    char *filename, *content;
+
+    for (int i = 1; i <= MAX_FILES; i++) {
+        // Open old file for reading
+        filename = (char *)malloc((15 + 1) * sizeof(char)); // +1 for null terminator
+        if (filename == NULL) {
+            perror("Error allocating memory");
+            exit(EXIT_FAILURE);
+        }
+
+        sprintf(filename, "file%d.txt", i);
+        oldFile = fopen(filename, "r");
+
+        if (oldFile == NULL) {
+            perror("Error opening file");
+            exit(EXIT_FAILURE);
+        }
+
+        // Read content from old file
+        content = (char *)malloc(15 * sizeof(char));
+        if (content == NULL) {
+            perror("Error allocating memory");
+            exit(EXIT_FAILURE);
+        }
+
+        fscanf(oldFile, "%s", content);
+
+        // Close the old file
+        fclose(oldFile);
+
+        // Create new file with content as its name
+        char *newFilename = (char *)malloc((15 + 4) * sizeof(char)); // 4 for ".txt"
+        if (newFilename == NULL) {
+            perror("Error allocating memory");
+            exit(EXIT_FAILURE);
+        }
+
+        sprintf(newFilename, "%s.txt", content);
+
+        newFile = fopen(newFilename, "w");
+
+        if (newFile == NULL) {
+            perror("Error creating new file");
+            exit(EXIT_FAILURE);
+        }
+
+        // Write content as the name of old file into the new file
+        fprintf(newFile, "Filename: %s Content: %s\n", filename, content);
+
+        // Close the new file
+        fclose(newFile);
+
+        // Display the content of each file
+        printf("Filename: %s Content: %s\n", filename, content);
+
+        // Free allocated memory
+        free(filename);
+        free(content);
+        free(newFilename);
+    }
+}
+
+int main() {
+    // Create files file1.txt to file50.txt with content 'pqri.dat'
+    createFiles();
+
+    // Process files, create new files, and display content
+    processFiles();
+
+    return 0;
+}
